@@ -1,0 +1,462 @@
+# Graduation Invitation OS — Project Plan
+Author: Hieu
+Project Type: Personalized Graduation Invitation Website
+Theme: Pixel Art + Retro Desktop + University Graduation
+Tech Stack: Next.js + Tailwind + Supabase + Framer Motion
+
+---
+
+# 1. PROJECT OVERVIEW
+
+## Goal
+
+Build a personalized graduation invitation website for friends/classmates.
+
+Each user receives a customized invitation page based on their phone number or personal slug.
+
+The website should feel like:
+
+- a retro operating system
+- a nostalgic university memory archive
+- a pixel-art desktop environment
+- an emotional "final chapter" of university life
+
+NOT a game.
+
+The UI should focus on:
+
+- memories
+- university journey
+- graduation emotion
+- IT student vibe
+
+---
+
+# 2. CORE CONCEPT
+
+## Main Theme
+
+"Graduation OS"
+
+The entire website behaves like a retro desktop system.
+
+Examples:
+
+- Terminal.exe
+- Memories.exe
+- Invitation.exe
+- StudentStats.exe
+- FriendsOnline.exe
+
+Each floating window contains part of the story/memory.
+
+---
+
+# 3. USER FLOW
+
+## Flow Option A (Recommended)
+
+### Personalized URL
+
+User opens:
+
+/invite/minh-01
+
+Backend fetches custom data using slug.
+
+Advantages:
+
+- smoother UX
+- easier sharing
+- cleaner URLs
+- more emotional
+
+---
+
+## Flow Option B
+
+### Phone Number Authentication
+
+1. User opens landing page
+2. Enter phone number
+3. Backend checks database
+4. Redirect to personalized page
+
+Example:
+
+/invite/abcxyz123
+
+---
+
+# 4. UI/UX STRUCTURE
+
+---
+
+## 4.1 Desktop Background
+
+### Theme
+
+Pixel-art university campus during sunset.
+
+Visual elements:
+
+- university buildings
+- orange sunset
+- falling leaves
+- benches
+- laptops
+- graduation banners
+- cherry blossom / phượng leaves
+- pixel lighting
+
+Mood:
+
+- nostalgic
+- peaceful
+- emotional
+- end-of-journey vibe
+
+---
+
+## 4.2 Floating Windows
+
+### Main Window — Invitation.exe
+
+Purpose:
+
+Main invitation content.
+
+Contains:
+
+- personalized greeting
+- invitation message
+- graduation info
+- event location
+- confirmation button
+
+Design:
+
+- largest window
+- centered
+- pixel window style
+- subtle floating animation
+
+---
+
+### Terminal.exe
+
+Purpose:
+
+Add IT student atmosphere.
+
+Content example:
+
+> loading memories...
+> compiling university life...
+> fixing deadlines...
+> survived.
+> graduation complete.
+
+Effects:
+
+- typing animation
+- blinking cursor
+- green terminal text
+
+---
+
+### StudentStats.exe
+
+Purpose:
+
+Funny RPG-style university statistics.
+
+Example:
+
+LEVEL: Senior
+MAJOR: Information Systems
+SLEEP: -999
+BUGS FIXED: ∞
+SIDE QUESTS: 42
+
+Contains:
+
+- avatar
+- progress bars
+- achievements
+- badges
+
+---
+
+### FriendsOnline.exe
+
+Purpose:
+
+Display friends/classmates.
+
+Features:
+
+- online/offline indicators
+- pixel avatars
+- hover animation
+
+Optional:
+
+Click friend → open memory popup
+
+---
+
+### Memories.exe
+
+Purpose:
+
+Display real-life photos.
+
+Contains:
+
+- image carousel
+- university memories
+- event photos
+- group photos
+
+Frame style:
+
+Pixel-art window.
+
+Actual images remain real.
+
+---
+
+## 4.3 Pixel Characters
+
+Characters should represent university students.
+
+Examples:
+
+- student with laptop
+- graduation outfit
+- backpack
+- coding on laptop
+- holding degree
+
+Animations:
+
+- idle animation
+- walking loop
+- floating effect
+
+DO NOT use fantasy RPG characters.
+
+---
+
+# 5. VISUAL STYLE GUIDE
+
+---
+
+## Color Palette
+
+Primary:
+
+- navy blue
+- warm sunset orange
+- cream white
+- retro blue
+- soft yellow
+
+Avoid:
+
+- neon cyberpunk
+- fantasy purple overload
+- over-saturated colors
+
+---
+
+## Font
+
+Recommended:
+
+### Pixel Font
+
+Press Start 2P
+
+Alternative:
+
+- VT323
+- Pixelify Sans
+
+---
+
+## Effects
+
+### Required
+
+- subtle floating windows
+- fade in
+- typing animation
+- CRT overlay
+- ambient particles
+- hover effects
+
+### Avoid
+
+- excessive motion
+- chaotic animations
+- game combat effects
+
+---
+
+# 6. TECH STACK
+
+---
+
+## Frontend
+
+### Framework
+
+Next.js (App Router)
+
+Reason:
+
+- routing
+- API routes
+- SEO
+- deployment simplicity
+
+---
+
+## Styling
+
+Tailwind CSS
+
+Reason:
+
+- fast development
+- utility-first
+- responsive layout
+
+---
+
+## Animation
+
+Framer Motion
+
+Usage:
+
+- floating windows
+- fade in
+- transitions
+- hover effects
+
+---
+
+## Backend
+
+Use Next.js API routes.
+
+Example:
+
+/api/invite
+/api/check-phone
+
+---
+
+## Database
+
+Supabase PostgreSQL
+
+Tables:
+
+- invites
+- memories
+- users
+- gallery
+
+---
+
+## Storage
+
+Supabase Storage
+
+Stores:
+
+- photos
+- avatars
+- pixel assets
+
+---
+
+## Deployment
+
+Vercel
+
+Reason:
+
+- optimized for Next.js
+- easy CI/CD
+- simple deployment
+
+---
+
+# 7. DATABASE DESIGN
+
+---
+
+## Table: invites
+
+| field | type |
+|---|---|
+| id | uuid |
+| slug | text |
+| phone | text |
+| name | text |
+| major | text |
+| personalized_message | text |
+| avatar_url | text |
+| graduation_year | text |
+| created_at | timestamp |
+
+---
+
+## Table: memories
+
+| field | type |
+|---|---|
+| id | uuid |
+| invite_id | uuid |
+| image_url | text |
+| caption | text |
+
+---
+
+# 8. FOLDER STRUCTURE
+
+```txt
+/app
+  /(routes)
+    /invite/[slug]
+      page.tsx
+
+/components
+  PixelWindow.tsx
+  TerminalWindow.tsx
+  StudentStats.tsx
+  FriendsWindow.tsx
+  MemoryGallery.tsx
+  PixelCharacter.tsx
+  CRTOverlay.tsx
+  FloatingParticles.tsx
+
+/lib
+  supabase.ts
+
+/public
+  /sprites
+  /backgrounds
+  /icons
+  /photos
+
+/styles
+  globals.css
+
+/types
+  invite.ts
