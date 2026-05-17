@@ -19,25 +19,40 @@ export default function TerminalWindow({ commands }: TerminalWindowProps) {
 
   useEffect(() => {
     const cmds = commands || defaultCommands;
+    
+    // Ngừng nếu đã hoàn thành tất cả commands
+    if (commandIndex >= cmds.length) {
+      return;
+    }
+
     let charIndex = 0;
     const currentCmd = cmds[commandIndex];
+    let interval: NodeJS.Timeout | undefined;
+    let timeout: NodeJS.Timeout | undefined;
 
-    const interval = setInterval(() => {
-      if (charIndex < currentCmd.length) {
-        setDisplayText((prev) => prev + currentCmd[charIndex]);
-        charIndex++;
-      } else {
-        clearInterval(interval);
-        if (commandIndex < cmds.length - 1) {
-          setTimeout(() => {
-            setCommandIndex(commandIndex + 1);
-            setDisplayText((prev) => prev + "\n");
-          }, 500);
+    const startTyping = () => {
+      interval = setInterval(() => {
+        if (charIndex < currentCmd.length) {
+          setDisplayText((prev) => prev + currentCmd[charIndex]);
+          charIndex++;
+        } else {
+          if (interval) clearInterval(interval);
+          if (commandIndex < cmds.length - 1) {
+            timeout = setTimeout(() => {
+              setCommandIndex((prev) => prev + 1);
+              setDisplayText((prev) => prev + "\n");
+            }, 500);
+          }
         }
-      }
-    }, 50);
+      }, 50);
+    };
 
-    return () => clearInterval(interval);
+    startTyping();
+
+    return () => {
+      if (interval) clearInterval(interval);
+      if (timeout) clearTimeout(timeout);
+    };
   }, [commandIndex, commands]);
 
   return (

@@ -36,9 +36,9 @@ export default function StudentStatsWindow({ stats }: StudentStatsProps) {
 
           <div>
             <p className="text-xs font-bold" style={{ fontFamily: "Press Start 2P" }}>
-              MAJOR
+              GRADUATION YEAR
             </p>
-            <p className="text-xs mt-1">{stats.major}</p>
+            <p className="text-xs mt-1">{stats.graduation_year}</p>
           </div>
 
           <div>
