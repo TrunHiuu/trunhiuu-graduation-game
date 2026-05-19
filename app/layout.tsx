@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Press_Start_2P } from "next/font/google";
+import { Geist, Geist_Mono, Press_Start_2P, Roboto } from "next/font/google";
 import BackgroundMusic from "@/components/BackgroundMusic";
 import "./globals.css";
 
@@ -19,6 +19,12 @@ const pressStart2P = Press_Start_2P({
   subsets: ["latin"],
 });
 
+const roboto = Roboto({
+  variable: "--font-roboto",
+  weight: ["400", "700"],
+  subsets: ["latin", "vietnamese"],
+});
+
 export const metadata: Metadata = {
   title: "TrunHiuu Graduation Game",
   description: "Graduation Invitation Experience",
@@ -35,7 +41,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${pressStart2P.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${pressStart2P.variable} ${roboto.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <BackgroundMusic />

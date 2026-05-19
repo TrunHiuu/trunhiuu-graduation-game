@@ -74,7 +74,10 @@ export default function InvitePage() {
 
   if (loading || !minimumLoadingDone) {
     return (
-      <div className="navy-loading-screen w-full h-screen flex items-center justify-center overflow-hidden">
+      <div 
+        className="navy-loading-screen w-full h-screen flex items-center justify-center overflow-hidden"
+        style={{ backgroundImage: "url('/main_background.png')", backgroundSize: "cover", backgroundPosition: "center" }}
+      >
         <div className="relative z-10 flex w-[min(58vw,300px)] flex-col items-center">
           <div className="degree-loading-track">
             <div className="degree-loading-fill" />
@@ -85,7 +88,7 @@ export default function InvitePage() {
               draggable={false}
             />
           </div>
-          <p style={{ fontFamily: "Press Start 2P" }} className="text-white text-sm">
+          <p style={{ fontFamily: "var(--font-roboto)" }} className="text-white text-sm">
             Loading...
           </p>
         </div>
@@ -95,9 +98,12 @@ export default function InvitePage() {
 
   if (!user || !invitation) {
     return (
-      <div className="w-full h-screen bg-gradient-to-b from-yellow-900 via-orange-400 to-orange-300 flex items-center justify-center">
+      <div 
+        className="w-full h-screen flex items-center justify-center"
+        style={{ backgroundImage: "url('/main_background.png')", backgroundSize: "cover", backgroundPosition: "center" }}
+      >
         <div className="text-center">
-          <p style={{ fontFamily: "Press Start 2P" }} className="text-white text-sm">
+          <p style={{ fontFamily: "var(--font-roboto)" }} className="text-white text-sm">
             Invitation not found
           </p>
         </div>
@@ -114,53 +120,64 @@ export default function InvitePage() {
   };
 
   return (
-    <div className="relative w-full h-screen bg-gradient-to-b from-yellow-900 via-orange-400 to-orange-300 overflow-hidden">
+    <div 
+      className="relative w-full h-screen overflow-hidden"
+      style={{ backgroundImage: "url('/main_background.png')", backgroundSize: "cover", backgroundPosition: "center", backgroundAttachment: "fixed" }}
+    >
       <MusicToggleButton />
 
       {/* Floating Particles */}
       <FloatingParticles />
 
-      {/* Desktop Windows */}
-      <div className="relative w-full h-full">
-        {/* Main Invitation Window */}
-        <PixelWindow
-          title="Invitation.exe"
-          width="500px"
-          height="350px"
-          x={100}
-          y={80}
-        >
-          <div className="space-y-3">
-            <div>
-              <p style={{ fontFamily: "Press Start 2P" }} className="text-sm text-blue-900">
-                Dear {user.name},
-              </p>
-            </div>
-
-            <p className="text-xs">{invitation.personalized_message}</p>
-
-            <div className="border-t-2 border-gray-800 pt-3">
-              <p className="text-xs font-bold">Graduation Year: {invitation.graduation_year}</p>
-              <p className="text-xs font-bold">Event Location: TBA</p>
-            </div>
-
-            <button className="w-full bg-blue-500 border-2 border-gray-800 text-white text-xs font-bold py-2 hover:bg-blue-600">
-              Confirm Attendance
-            </button>
+      {/* Desktop Windows - vertically centered */}
+      <div className="flex h-full w-full items-center justify-center px-4 py-6">
+        <div className="grid h-[calc(100vh-140px)] w-full max-w-[1600px] grid-cols-4 gap-4">
+          {/* Column 1: Terminal (full height) */}
+          <div className="col-span-1 h-full">
+            <TerminalWindow />
           </div>
-        </PixelWindow>
 
-        {/* Terminal Window */}
-        <TerminalWindow />
+          {/* Column 2-3: Invitation (full height) */}
+          <div className="col-span-2 h-full flex items-center justify-center">
+            <PixelWindow
+              title="Invitation.exe"
+              width="100%"
+              height="100%"
+            >
+              <div className="space-y-3">
+                <div>
+                  <p style={{ fontFamily: "var(--font-roboto)" }} className="text-sm text-blue-900">
+                    Dear {user.name},
+                  </p>
+                </div>
 
-        {/* Player Character */}
-        <PlayerCharacter user={user} invitation={invitation} />
+                <p style={{ fontFamily: "var(--font-roboto)", fontSize: "12px" }} className="text-xs">{invitation.personalized_message}</p>
 
-        {/* Student Stats */}
-        <StudentStatsWindow stats={studentStats} />
+                <div className="border-t-2 border-gray-800 pt-3">
+                  <p style={{ fontFamily: "var(--font-roboto)" }} className="text-xs font-bold">Graduation Year: {invitation.graduation_year}</p>
+                  <p style={{ fontFamily: "var(--font-roboto)" }} className="text-xs font-bold">Event Location: TBA</p>
+                </div>
 
-        {/* Memory Gallery */}
-        {memories.length > 0 && <MemoryGallery memories={memories} />}
+                <button style={{ fontFamily: "var(--font-roboto)" }} className="w-full bg-blue-500 border-2 border-gray-800 text-white text-xs font-bold py-2 hover:bg-blue-600">
+                  Confirm Attendance
+                </button>
+              </div>
+            </PixelWindow>
+          </div>
+
+          {/* Column 4: Stack Stats and Player - equal height, total height = other columns */}
+          <div className="col-span-1 h-full flex flex-col gap-4">
+            {/* Top: Student Stats - equal height to Player */}
+            <div className="flex-1">
+              <StudentStatsWindow stats={studentStats} />
+            </div>
+
+            {/* Bottom: Player Character - equal height to Student (duplicate StudentStats for now) */}
+            <div className="flex-1">
+              <StudentStatsWindow stats={studentStats} />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* CRT Effect */}

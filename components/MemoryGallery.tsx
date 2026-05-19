@@ -13,19 +13,17 @@ export default function MemoryGallery({ memories }: MemoryGalleryProps) {
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="absolute bg-gradient-to-b from-pink-200 to-pink-300 border-4 border-gray-800 shadow-lg"
+        className="w-full h-full bg-gradient-to-b from-pink-200 to-pink-300 border-4 border-gray-800 shadow-lg flex flex-col"
         style={{
-          width: "400px",
-          height: "350px",
           boxShadow: "4px 4px 0px rgba(0, 0, 0, 0.3), inset 2px 2px 0px rgba(255, 255, 255, 0.5)",
         }}
       >
-        <div className="bg-gradient-to-r from-pink-500 to-pink-600 px-2 py-1 border-b-2 border-gray-800">
-          <span className="text-white font-bold text-xs" style={{ fontFamily: "Press Start 2P" }}>
+        <div className="bg-gradient-to-r from-pink-500 to-pink-600 px-2 py-1 border-b-2 border-gray-800 flex-shrink-0">
+          <span className="text-white font-bold text-xs" style={{ fontFamily: "var(--font-roboto)" }}>
             Memories.exe
           </span>
         </div>
-        <div className="p-4 h-[calc(100%-28px)] flex items-center justify-center">
+        <div className="p-4 flex-1 flex items-center justify-center">
           <p className="text-center text-sm">No memories yet...</p>
         </div>
       </motion.div>
@@ -38,22 +36,20 @@ export default function MemoryGallery({ memories }: MemoryGalleryProps) {
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="absolute bg-gradient-to-b from-pink-200 to-pink-300 border-4 border-gray-800 shadow-lg"
+      className="w-full h-full bg-gradient-to-b from-pink-200 to-pink-300 border-4 border-gray-800 shadow-lg flex flex-col"
       style={{
-        width: "400px",
-        height: "350px",
         boxShadow: "4px 4px 0px rgba(0, 0, 0, 0.3), inset 2px 2px 0px rgba(255, 255, 255, 0.5)",
       }}
     >
       {/* Title Bar */}
-      <div className="bg-gradient-to-r from-pink-500 to-pink-600 px-2 py-1 border-b-2 border-gray-800">
-        <span className="text-white font-bold text-xs" style={{ fontFamily: "Press Start 2P" }}>
+      <div className="bg-gradient-to-r from-pink-500 to-pink-600 px-2 py-1 border-b-2 border-gray-800 flex-shrink-0">
+        <span className="text-white font-bold text-xs" style={{ fontFamily: "var(--font-roboto)" }}>
           Memories.exe
         </span>
       </div>
 
       {/* Content */}
-      <div className="p-3 h-[calc(100%-28px)] flex flex-col">
+      <div className="p-3 flex-1 flex flex-col">
         {/* Image */}
         <div className="flex-1 bg-black border-2 border-gray-800 mb-2 overflow-hidden flex items-center justify-center">
           <motion.img

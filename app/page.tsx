@@ -308,7 +308,7 @@ export default function Home() {
                             onChange={(e) => setPhone(e.target.value)}
                             placeholder="Enter Your Phone Number!"
                             disabled={loading}
-                            style={{ width: "100%", padding: "6px", backgroundColor: "#ffffff", border: "1px solid", borderColor: "#505080 #ffffff #ffffff #505080", fontFamily: "'Press Start 2P', monospace", fontSize: "7px", color: "#000080", boxSizing: "border-box", outline: "none", boxShadow: "inset 1px 1px 0 #505080, inset -1px -1px 0 #ffffff", fontWeight: "bold", letterSpacing: "1px" }}
+                            style={{ width: "100%", padding: "8px", backgroundColor: "#ffffff", border: "1px solid", borderColor: "#505080 #ffffff #ffffff #505080", fontFamily: "var(--font-roboto)", fontSize: "12px", color: "#000080", boxSizing: "border-box", outline: "none", boxShadow: "inset 1px 1px 0 #505080, inset -1px -1px 0 #ffffff", fontWeight: "bold", letterSpacing: "0.5px" }}
                           />
                         </div>
                         {error && (

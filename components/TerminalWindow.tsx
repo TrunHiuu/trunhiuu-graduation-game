@@ -59,22 +59,20 @@ export default function TerminalWindow({ commands }: TerminalWindowProps) {
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="absolute bg-black border-4 border-green-600 shadow-lg"
+      className="w-full h-full bg-black border-4 border-green-600 shadow-lg flex flex-col"
       style={{
-        width: "450px",
-        height: "250px",
         boxShadow: "4px 4px 0px rgba(0, 0, 0, 0.3), inset 2px 2px 0px rgba(0, 255, 0, 0.1)",
       }}
     >
       {/* Title Bar */}
-      <div className="bg-green-700 px-2 py-1 flex justify-between items-center border-b-2 border-green-600">
+      <div className="bg-green-700 px-2 py-1 flex justify-between items-center border-b-2 border-green-600 flex-shrink-0">
         <span className="text-green-300 font-bold text-xs" style={{ fontFamily: "monospace" }}>
           Terminal.exe
         </span>
       </div>
 
       {/* Terminal Content */}
-      <div className="p-3 h-[calc(100%-28px)] overflow-auto bg-black font-mono text-green-300">
+      <div className="p-3 flex-1 overflow-auto bg-black font-mono text-green-300">
         <div className="text-xs whitespace-pre-wrap break-words">{displayText}</div>
         <motion.span
           animate={{ opacity: [1, 0] }}
