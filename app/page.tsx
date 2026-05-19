@@ -6,8 +6,9 @@ import CRTOverlay from "@/components/CRTOverlay";
 import FloatingParticles from "@/components/FloatingParticles";
 import MusicToggleButton from "@/components/MusicToggleButton";
 import TwinklingStars from "@/components/TwinklingStars";
+import MusicNotesEffect from "@/components/MusicNotesEffect";
 import { useBackgroundMusicControl } from "@/components/BackgroundMusic";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
@@ -19,6 +20,10 @@ export default function Home() {
   const [error, setError] = useState("");
   const [showWelcome, setShowWelcome] = useState(true);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const [showMusicNotes, setShowMusicNotes] = useState(false);
+  const [showGoMusicNotes, setShowGoMusicNotes] = useState(false);
+  const [isWelcomeButtonPressed, setIsWelcomeButtonPressed] = useState(false);
+  const [isGoButtonPressed, setIsGoButtonPressed] = useState(false);
   const { setPlaying: setMusicPlaying } = useBackgroundMusicControl();
   const router = useRouter();
 
@@ -30,6 +35,35 @@ export default function Home() {
       setShowLoginPopup(true);
     }, 300);
   };
+
+  const handleWelcomeButtonMouseDown = () => {
+    setIsWelcomeButtonPressed(true);
+  };
+
+  const handleWelcomeButtonMouseUp = () => {
+    setIsWelcomeButtonPressed(false);
+    setShowMusicNotes(true);
+    handleWelcomeOK();
+  };
+
+  const handleGoButtonMouseDown = () => {
+    setIsGoButtonPressed(true);
+  };
+
+  const handleGoButtonMouseUp = () => {
+    setIsGoButtonPressed(false);
+    setShowGoMusicNotes(true);
+  };
+
+  // Reset Go music notes effect after animation completes
+  useEffect(() => {
+    if (showGoMusicNotes) {
+      const timer = setTimeout(() => {
+        setShowGoMusicNotes(false);
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [showGoMusicNotes]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,7 +160,7 @@ export default function Home() {
                 lineHeight: "1.5"
               }}
             >
-              Welcome to the Graduation Invitation Game.
+              Welcome to the TrunHiuu Graduation Game.
               <br />
               Click OK to continue
             </p>
@@ -143,11 +177,12 @@ export default function Home() {
               }}
             >
               <button
-                onClick={handleWelcomeOK}
+                onMouseDown={handleWelcomeButtonMouseDown}
+                onMouseUp={handleWelcomeButtonMouseUp}
                 style={{
-                  backgroundColor: "#d4669b",
+                  backgroundColor: isWelcomeButtonPressed ? "#a83d6e" : "#d4669b",
                   border: "2px solid",
-                  borderColor: "#f0a8d8 #6d2860 #6d2860 #f0a8d8",
+                  borderColor: isWelcomeButtonPressed ? "#6d2860 #f0a8d8 #f0a8d8 #6d2860" : "#f0a8d8 #6d2860 #6d2860 #f0a8d8",
                   padding: "10px 30px",
                   fontFamily: "Arial Black, monospace",
                   fontSize: "13px",
@@ -158,7 +193,11 @@ export default function Home() {
                   letterSpacing: "2px",
                   textShadow: "1px 1px 0 #000000",
                   outline: "none",
-                  boxShadow: "inset 1px 1px 0 #f0a8d8, inset -1px -1px 0 #000000"
+                  boxShadow: isWelcomeButtonPressed 
+                    ? "inset -1px -1px 0 #f0a8d8, inset 1px 1px 0 #000000" 
+                    : "inset 1px 1px 0 #f0a8d8, inset -1px -1px 0 #000000",
+                  transform: isWelcomeButtonPressed ? "scale(0.98)" : "scale(1)",
+                  transition: "all 0.05s ease-out"
                 }}
               >
                 OK
@@ -269,7 +308,7 @@ export default function Home() {
                             onChange={(e) => setPhone(e.target.value)}
                             placeholder="Enter Your Phone Number!"
                             disabled={loading}
-                            style={{ width: "100%", padding: "6px", backgroundColor: "#ffffff", border: "1px solid", borderColor: "#505080 #ffffff #ffffff #505080", fontFamily: "Courier New, monospace", fontSize: "11px", color: "#000080", boxSizing: "border-box", outline: "none", boxShadow: "inset 1px 1px 0 #505080, inset -1px -1px 0 #ffffff", fontWeight: "bold" }}
+                            style={{ width: "100%", padding: "6px", backgroundColor: "#ffffff", border: "1px solid", borderColor: "#505080 #ffffff #ffffff #505080", fontFamily: "'Press Start 2P', monospace", fontSize: "7px", color: "#000080", boxSizing: "border-box", outline: "none", boxShadow: "inset 1px 1px 0 #505080, inset -1px -1px 0 #ffffff", fontWeight: "bold", letterSpacing: "1px" }}
                           />
                         </div>
                         {error && (
@@ -283,7 +322,28 @@ export default function Home() {
                           <button
                             type="submit"
                             disabled={loading}
-                            style={{ backgroundColor: "#1e5aa8", border: "2px solid", borderColor: loading ? "#0a2a6a #1a4a8a #1a4a8a #0a2a6a" : "#4a8ace #0a2a6a #0a2a6a #4a8ace", padding: "10px 20px", fontFamily: "Arial Black, monospace", fontSize: "13px", fontWeight: "900", color: "#ffffff", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1, textAlign: "center", letterSpacing: "2px", textShadow: "1px 1px 0 #000000", outline: "none", boxShadow: loading ? "inset 1px 1px 0 #0a2a6a" : "inset 1px 1px 0 #6aadee, inset -1px -1px 0 #000000", minWidth: "110px" }}
+                            onMouseDown={handleGoButtonMouseDown}
+                            onMouseUp={handleGoButtonMouseUp}
+                            style={{ 
+                              backgroundColor: isGoButtonPressed && !loading ? "#165295" : "#1e5aa8", 
+                              border: "2px solid", 
+                              borderColor: isGoButtonPressed && !loading ? "#0a2a6a #4a8ace #4a8ace #0a2a6a" : loading ? "#0a2a6a #1a4a8a #1a4a8a #0a2a6a" : "#4a8ace #0a2a6a #0a2a6a #4a8ace", 
+                              padding: "10px 20px", 
+                              fontFamily: "Arial Black, monospace", 
+                              fontSize: "13px", 
+                              fontWeight: "900", 
+                              color: "#ffffff", 
+                              cursor: loading ? "not-allowed" : "pointer", 
+                              opacity: loading ? 0.7 : 1, 
+                              textAlign: "center", 
+                              letterSpacing: "2px", 
+                              textShadow: "1px 1px 0 #000000", 
+                              outline: "none", 
+                              boxShadow: isGoButtonPressed && !loading ? "inset -1px -1px 0 #4a8ace, inset 1px 1px 0 #000000" : loading ? "inset 1px 1px 0 #0a2a6a" : "inset 1px 1px 0 #6aadee, inset -1px -1px 0 #000000", 
+                              minWidth: "110px",
+                              transform: isGoButtonPressed && !loading ? "scale(0.98)" : "scale(1)",
+                              transition: "all 0.05s ease-out"
+                            }}
                           >
                             {loading ? "LOADING" : "Go!"}
                           </button>
@@ -300,6 +360,12 @@ export default function Home() {
 
       {/* Floating Particles - Animated Stars */}
       <FloatingParticles />
+
+      {/* Music Notes Effect - Pink (Welcome OK button) */}
+      <MusicNotesEffect trigger={showMusicNotes} />
+
+      {/* Music Notes Effect - Cyan (Go button) */}
+      <MusicNotesEffect trigger={showGoMusicNotes} color="cyan" />
 
       {/* Twinkling Stars - Sparkle Effects */}
       <TwinklingStars />
