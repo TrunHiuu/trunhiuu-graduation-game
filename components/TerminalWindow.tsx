@@ -3,19 +3,38 @@ import React, { useEffect, useState } from "react";
 
 interface TerminalWindowProps {
   commands?: string[];
+  title?: string;
+  titleBarColor?: string;
 }
 
 const defaultCommands = [
-  "loading memories...",
-  "compiling university life...",
-  "fixing deadlines...",
-  "survived.",
-  "graduation complete.",
+  "Hi there, all my adorable friends",
+  "You are invited to attend my graduation game",
+  "Let complete all missions to gain the reward",
+  "Reward will be exchanged in my graduation ceremony",
+  "Let go there to cheer up with me and receive your gift",
+  " ",
+  "     ---------------------------------------------------------------",
+  "     Mision Information       ",
+  "1st Round - Wish Crafting Odyssey:        Opening",
+  "2nd Round - Quiz Challenge:                  Opening",
+  "3rd Round - Photographic Finale:           Coming soon (9/6/2026)",
+  " ",
+  "     ---------------------------------------------------------------",
+  "Let CONFIRM your attendance to start metric in the Mission.exe window!",
 ];
 
-export default function TerminalWindow({ commands }: TerminalWindowProps) {
+export default function TerminalWindow({
+  commands,
+  title = "Notification.exe",
+  titleBarColor = "#00CC00",
+}: TerminalWindowProps) {
   const [displayText, setDisplayText] = useState("");
   const [commandIndex, setCommandIndex] = useState(0);
+
+  const handleDisplayText = (text: string) => {
+    setDisplayText(text);
+  };
 
   useEffect(() => {
     const cmds = commands || defaultCommands;
@@ -23,6 +42,11 @@ export default function TerminalWindow({ commands }: TerminalWindowProps) {
     // Ngừng nếu đã hoàn thành tất cả commands
     if (commandIndex >= cmds.length) {
       return;
+    }
+
+    let fullText = "";
+    for (let i = 0; i < commandIndex; i++) {
+      fullText += cmds[i] + "\n";
     }
 
     let charIndex = 0;
@@ -33,18 +57,18 @@ export default function TerminalWindow({ commands }: TerminalWindowProps) {
     const startTyping = () => {
       interval = setInterval(() => {
         if (charIndex < currentCmd.length) {
-          setDisplayText((prev) => prev + currentCmd[charIndex]);
+          fullText += currentCmd[charIndex];
+          handleDisplayText(fullText);
           charIndex++;
         } else {
           if (interval) clearInterval(interval);
           if (commandIndex < cmds.length - 1) {
             timeout = setTimeout(() => {
               setCommandIndex((prev) => prev + 1);
-              setDisplayText((prev) => prev + "\n");
-            }, 500);
+            }, 400);
           }
         }
-      }, 50);
+      }, 30);
     };
 
     startTyping();
@@ -53,22 +77,43 @@ export default function TerminalWindow({ commands }: TerminalWindowProps) {
       if (interval) clearInterval(interval);
       if (timeout) clearTimeout(timeout);
     };
-  }, [commandIndex, commands]);
+  }, [commandIndex]);
 
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="w-full h-full bg-black border-4 border-green-600 shadow-lg flex flex-col"
+      className="w-full h-full border-4 shadow-lg rounded-lg flex flex-col"
       style={{
-        boxShadow: "4px 4px 0px rgba(0, 0, 0, 0.3), inset 2px 2px 0px rgba(0, 255, 0, 0.1)",
+        backgroundColor: "#000000",
+        borderColor: "#808080",
+        borderRadius: "6px",
+        boxShadow: "3px 3px 0px rgba(0, 0, 0, 0.5), -1px -1px 0px rgba(255, 255, 255, 0.8), inset 1px 1px 0px rgba(255, 255, 255, 0.8), inset -1px -1px 0px rgba(0, 0, 0, 0.3)",
       }}
     >
       {/* Title Bar */}
-      <div className="bg-green-700 px-2 py-1 flex justify-between items-center border-b-2 border-green-600 flex-shrink-0">
-        <span className="text-green-300 font-bold text-xs" style={{ fontFamily: "monospace" }}>
-          Terminal.exe
+      <div
+        className="px-2 py-1 flex justify-between items-center border-b-2 flex-shrink-0"
+        style={{
+          background: titleBarColor,
+          borderBottomColor: "#808080",
+        }}
+      >
+        <span
+          className="font-bold text-xs flex items-center gap-1"
+          style={{ fontFamily: "monospace", color: titleBarColor === "#000000" ? "#86EFAC" : "white" }}
+        >
+          {title}
         </span>
+        <button
+          className="w-5 h-5 text-gray-800 text-xs font-bold border-2"
+          style={{
+            backgroundColor: "#C0C0C0",
+            borderColor: "#dfdfdf #808080 #808080 #dfdfdf",
+          }}
+        >
+          ×
+        </button>
       </div>
 
       {/* Terminal Content */}

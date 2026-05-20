@@ -132,17 +132,18 @@ export default function InvitePage() {
       {/* Desktop Windows - vertically centered */}
       <div className="flex h-full w-full items-center justify-center px-4 py-6">
         <div className="grid h-[calc(100vh-140px)] w-full max-w-[1600px] grid-cols-4 gap-4">
-          {/* Column 1: Terminal (full height) */}
+          {/* Column 1: Notification (full height) */}
           <div className="col-span-1 h-full">
-            <TerminalWindow />
+            <TerminalWindow title="Notification.exe" titleBarColor="#000000" />
           </div>
 
-          {/* Column 2-3: Invitation (full height) */}
+          {/* Column 2-3: Mission (full height) */}
           <div className="col-span-2 h-full flex items-center justify-center">
             <PixelWindow
-              title="Invitation.exe"
+              title="Mission.exe"
               width="100%"
               height="100%"
+              titleBarColor="#0066CC"
             >
               <div className="space-y-3">
                 <div>
@@ -165,16 +166,24 @@ export default function InvitePage() {
             </PixelWindow>
           </div>
 
-          {/* Column 4: Stack Stats and Player - equal height, total height = other columns */}
+          {/* Column 4: Stack DashBoard and Player - equal height, total height = other columns */}
           <div className="col-span-1 h-full flex flex-col gap-4">
-            {/* Top: Student Stats - equal height to Player */}
+            {/* Top: DashBoard */}
             <div className="flex-1">
-              <StudentStatsWindow stats={studentStats} />
+              <StudentStatsWindow
+                stats={studentStats}
+                title="DashBoard.exe"
+                titleBarColor="#FFA500"
+              />
             </div>
 
-            {/* Bottom: Player Character - equal height to Student (duplicate StudentStats for now) */}
+            {/* Bottom: Player */}
             <div className="flex-1">
-              <StudentStatsWindow stats={studentStats} />
+              <StudentStatsWindow
+                stats={studentStats}
+                title="Player.exe"
+                titleBarColor="#FF69B4"
+              />
             </div>
           </div>
         </div>

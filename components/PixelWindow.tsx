@@ -8,6 +8,7 @@ interface PixelWindowProps {
   height?: string;
   x?: number;
   y?: number;
+  titleBarColor?: string;
 }
 
 export default function PixelWindow({
@@ -17,6 +18,7 @@ export default function PixelWindow({
   height = "300px",
   x = 0,
   y = 0,
+  titleBarColor = "#0066CC",
 }: PixelWindowProps) {
   const isAbsolute = x !== 0 || y !== 0;
 
@@ -25,37 +27,78 @@ export default function PixelWindow({
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
-      className={`bg-gradient-to-b from-blue-200 to-blue-300 border-4 border-gray-800 shadow-lg ${
+      className={`border-4 shadow-lg rounded-lg ${
         isAbsolute ? "absolute" : "relative w-full h-full flex flex-col"
       }`}
-      style={
-        isAbsolute
+      style={{
+        backgroundColor: "#D4C5B0",
+        borderColor: "#808080",
+        borderRadius: "6px",
+        ...(isAbsolute
           ? {
               width,
               height,
               x,
               y,
-              boxShadow: "4px 4px 0px rgba(0, 0, 0, 0.3), inset 2px 2px 0px rgba(255, 255, 255, 0.5)",
+              boxShadow: "3px 3px 0px rgba(0, 0, 0, 0.5), -1px -1px 0px rgba(255, 255, 255, 0.8), inset 1px 1px 0px rgba(255, 255, 255, 0.8), inset -1px -1px 0px rgba(0, 0, 0, 0.3)",
             }
           : {
               width: "100%",
               height: "100%",
-              boxShadow: "4px 4px 0px rgba(0, 0, 0, 0.3), inset 2px 2px 0px rgba(255, 255, 255, 0.5)",
-            }
-      }
+              boxShadow: "3px 3px 0px rgba(0, 0, 0, 0.5), -1px -1px 0px rgba(255, 255, 255, 0.8), inset 1px 1px 0px rgba(255, 255, 255, 0.8), inset -1px -1px 0px rgba(0, 0, 0, 0.3)",
+            }),
+      }}
     >
       {/* Title Bar */}
-      <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-2 py-1 flex justify-between items-center border-b-2 border-gray-800 flex-shrink-0">
-        <span className="text-white font-bold text-xs" style={{ fontFamily: "var(--font-roboto)" }}>
+      <div
+        className="px-2 py-1 flex justify-between items-center border-b-2 flex-shrink-0"
+        style={{
+          background: titleBarColor,
+          borderBottomColor: "#808080",
+          display: "flex",
+        }}
+      >
+        <span
+          className="text-white font-bold text-xs flex items-center gap-1"
+          style={{ fontFamily: "var(--font-roboto)" }}
+        >
           {title}
         </span>
-        <button className="w-5 h-5 bg-gray-300 border-2 border-gray-800 text-gray-800 text-xs font-bold hover:bg-gray-400">
-          ×
-        </button>
+        <div className="flex gap-1">
+          <button
+            className="w-5 h-5 text-gray-800 text-xs font-bold border-2"
+            style={{
+              backgroundColor: "#C0C0C0",
+              borderColor: "#dfdfdf #808080 #808080 #dfdfdf",
+            }}
+          >
+            _
+          </button>
+          <button
+            className="w-5 h-5 text-gray-800 text-xs font-bold border-2"
+            style={{
+              backgroundColor: "#C0C0C0",
+              borderColor: "#dfdfdf #808080 #808080 #dfdfdf",
+            }}
+          >
+            □
+          </button>
+          <button
+            className="w-5 h-5 text-gray-800 text-xs font-bold border-2"
+            style={{
+              backgroundColor: "#C0C0C0",
+              borderColor: "#dfdfdf #808080 #808080 #dfdfdf",
+            }}
+          >
+            ×
+          </button>
+        </div>
       </div>
 
       {/* Content */}
-      <div className="p-3 flex-1 overflow-auto">{children}</div>
+      <div className="p-4 flex-1 overflow-auto" style={{ backgroundColor: "#D4C5B0" }}>
+        {children}
+      </div>
     </motion.div>
   );
 }

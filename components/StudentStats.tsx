@@ -4,27 +4,54 @@ import { StudentStats } from "@/types/invite";
 
 interface StudentStatsProps {
   stats: StudentStats;
+  title?: string;
+  titleBarColor?: string;
 }
 
-export default function StudentStatsWindow({ stats }: StudentStatsProps) {
+export default function StudentStatsWindow({
+  stats,
+  title = "DashBoard.exe",
+  titleBarColor = "#FFA500",
+}: StudentStatsProps) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="w-full h-full bg-gradient-to-b from-purple-200 to-purple-300 border-4 border-gray-800 shadow-lg flex flex-col"
+      className="w-full h-full border-4 shadow-lg rounded-lg flex flex-col"
       style={{
-        boxShadow: "4px 4px 0px rgba(0, 0, 0, 0.3), inset 2px 2px 0px rgba(255, 255, 255, 0.5)",
+        backgroundColor: "#D4C5B0",
+        borderColor: "#808080",
+        borderRadius: "6px",
+        boxShadow: "3px 3px 0px rgba(0, 0, 0, 0.5), -1px -1px 0px rgba(255, 255, 255, 0.8), inset 1px 1px 0px rgba(255, 255, 255, 0.8), inset -1px -1px 0px rgba(0, 0, 0, 0.3)",
       }}
     >
       {/* Title Bar */}
-      <div className="bg-gradient-to-r from-purple-500 to-purple-600 px-2 py-1 border-b-2 border-gray-800 flex-shrink-0">
-        <span className="text-white font-bold text-xs" style={{ fontFamily: "var(--font-roboto)" }}>
-          StudentStats.exe
+      <div
+        className="px-2 py-1 border-b-2 flex-shrink-0 flex justify-between items-center"
+        style={{
+          background: titleBarColor,
+          borderBottomColor: "#808080",
+        }}
+      >
+        <span
+          className="text-white font-bold text-xs flex items-center gap-1"
+          style={{ fontFamily: "var(--font-roboto)" }}
+        >
+          {title}
         </span>
+        <button
+          className="w-5 h-5 text-gray-800 text-xs font-bold border-2"
+          style={{
+            backgroundColor: "#C0C0C0",
+            borderColor: "#dfdfdf #808080 #808080 #dfdfdf",
+          }}
+        >
+          ×
+        </button>
       </div>
 
       {/* Content */}
-      <div className="p-4 flex-1 overflow-auto">
+      <div className="p-4 flex-1 overflow-auto" style={{ backgroundColor: "#D4C5B0" }}>
         <div className="space-y-3">
           <div>
             <p className="text-xs font-bold" style={{ fontFamily: "var(--font-roboto)" }}>
