@@ -7,14 +7,12 @@ import { useParams, useRouter } from "next/navigation";
 import PixelWindow from "@/components/PixelWindow";
 import TerminalWindow from "@/components/TerminalWindow";
 import StudentStatsWindow from "@/components/StudentStats";
-import MemoryGallery from "@/components/MemoryGallery";
 import CRTOverlay from "@/components/CRTOverlay";
 import FloatingParticles from "@/components/FloatingParticles";
 import MusicToggleButton from "@/components/MusicToggleButton";
 import PlayerCharacter from "@/components/PlayerCharacter";
-import { User, Invitation, Memory, StudentStats } from "@/types/invite";
-
-const INVITE_ACCESS_KEY = "graduation-invite-access-slug";
+import { User, StudentStats } from "@/types/invite";
+const INVITE_ACCESS_KEY = "graduation-login-slug";
 
 export default function InvitePage() {
   const params = useParams();
@@ -22,8 +20,6 @@ export default function InvitePage() {
   const slug = params.slug as string;
 
   const [user, setUser] = useState<User | null>(null);
-  const [invitation, setInvitation] = useState<Invitation | null>(null);
-  const [memories, setMemories] = useState<Memory[]>([]);
   const [loading, setLoading] = useState(true);
   const [minimumLoadingDone, setMinimumLoadingDone] = useState(false);
 
@@ -45,7 +41,7 @@ export default function InvitePage() {
       }
 
       try {
-        const response = await fetch(`/api/invite?slug=${slug}`);
+        const response = await fetch(`/api/invite?slug=${encodeURIComponent(slug)}`);
 
         if (!response.ok) {
           console.error(`API error: ${response.status} ${response.statusText}`);
@@ -55,12 +51,10 @@ export default function InvitePage() {
 
         const data = await response.json();
 
-        if (data.user && data.invitation) {
+        if (data.user) {
           setUser(data.user);
-          setInvitation(data.invitation);
-          setMemories(data.memories || []);
         } else {
-          console.warn("No user or invitation data returned:", data);
+          console.warn("No user data returned:", data);
         }
       } catch (error) {
         console.error("Error fetching invite:", error);
@@ -96,7 +90,7 @@ export default function InvitePage() {
     );
   }
 
-  if (!user || !invitation) {
+  if (!user) {
     return (
       <div 
         className="w-full h-screen flex items-center justify-center"
@@ -104,7 +98,7 @@ export default function InvitePage() {
       >
         <div className="text-center">
           <p style={{ fontFamily: "var(--font-roboto)" }} className="text-white text-sm">
-            Invitation not found
+            User not found
           </p>
         </div>
       </div>
@@ -112,8 +106,8 @@ export default function InvitePage() {
   }
 
   const studentStats: StudentStats = {
-    level: "Senior",
-    graduation_year: invitation.graduation_year,
+    level: user.attendance_status?.code === "confirmed" ? "Confirmed" : "Player",
+    graduation_year: "2026",
     sleep: -999,
     bugFixed: Infinity,
     sideQuests: 42,
@@ -148,20 +142,28 @@ export default function InvitePage() {
               <div className="space-y-3">
                 <div>
                   <p style={{ fontFamily: "var(--font-roboto)" }} className="text-sm text-blue-900">
-                    Dear {user.name},
+                    Dear {user.nickname || user.name},
                   </p>
                 </div>
 
-                <p style={{ fontFamily: "var(--font-roboto)", fontSize: "12px" }} className="text-xs">{invitation.personalized_message}</p>
+                <p style={{ fontFamily: "var(--font-roboto)", fontSize: "12px" }} className="text-xs">
+                  Welcome to the graduation mission window. Use the buttons below to confirm or decline attendance.
+                </p>
 
                 <div className="border-t-2 border-gray-800 pt-3">
-                  <p style={{ fontFamily: "var(--font-roboto)" }} className="text-xs font-bold">Graduation Year: {invitation.graduation_year}</p>
+                  <p style={{ fontFamily: "var(--font-roboto)" }} className="text-xs font-bold">Nickname: {user.nickname || "N/A"}</p>
+                  <p style={{ fontFamily: "var(--font-roboto)" }} className="text-xs font-bold">Attendance: {user.attendance_status?.label || "Waiting"}</p>
                   <p style={{ fontFamily: "var(--font-roboto)" }} className="text-xs font-bold">Event Location: TBA</p>
                 </div>
 
-                <button style={{ fontFamily: "var(--font-roboto)" }} className="w-full bg-blue-500 border-2 border-gray-800 text-white text-xs font-bold py-2 hover:bg-blue-600">
-                  Confirm Attendance
-                </button>
+                <div className="grid grid-cols-2 gap-2">
+                  <button style={{ fontFamily: "var(--font-roboto)" }} className="w-full bg-red-500 border-2 border-gray-800 text-white text-xs font-bold py-2 hover:bg-red-600">
+                    Deny
+                  </button>
+                  <button style={{ fontFamily: "var(--font-roboto)" }} className="w-full bg-blue-500 border-2 border-gray-800 text-white text-xs font-bold py-2 hover:bg-blue-600">
+                    Confirm
+                  </button>
+                </div>
               </div>
             </PixelWindow>
           </div>

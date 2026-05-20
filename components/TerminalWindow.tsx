@@ -10,18 +10,19 @@ interface TerminalWindowProps {
 const defaultCommands = [
   "Hi there, all my adorable friends",
   "You are invited to attend my graduation game",
-  "Let complete all missions to gain the reward",
+  "Complete all missions to gain the reward",
   "Reward will be exchanged in my graduation ceremony",
-  "Let go there to cheer up with me and receive your gift",
+  "Let's go there to cheer up with me and receive your gift",
   " ",
   "     ---------------------------------------------------------------",
-  "     Mision Information       ",
-  "1st Round - Wish Crafting Odyssey:        Opening",
+  "     Mission Information       ",
+  "1st Round - Quiz Challenge:                  Opening",
   "2nd Round - Quiz Challenge:                  Opening",
-  "3rd Round - Photographic Finale:           Coming soon (9/6/2026)",
+  "3rd Round - Wish Crafting Odyssey:        Opening",
+  "4th Round - Photographic Finale:           Coming soon (9/6/2026)",
   " ",
   "     ---------------------------------------------------------------",
-  "Let CONFIRM your attendance to start metric in the Mission.exe window!",
+  "To start metric please CONFIRM your attendance in the Mission.exe window!",
 ];
 
 export default function TerminalWindow({

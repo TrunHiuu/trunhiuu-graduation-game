@@ -8,11 +8,12 @@ import MusicToggleButton from "@/components/MusicToggleButton";
 import TwinklingStars from "@/components/TwinklingStars";
 import MusicNotesEffect from "@/components/MusicNotesEffect";
 import { useBackgroundMusicControl } from "@/components/BackgroundMusic";
+import { createSlug } from "@/lib/slug";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
-const INVITE_ACCESS_KEY = "graduation-invite-access-slug";
+  const INVITE_ACCESS_KEY = "graduation-login-slug";
 
 export default function Home() {
   const [phone, setPhone] = useState("");
@@ -55,6 +56,13 @@ export default function Home() {
     setShowGoMusicNotes(true);
   };
 
+  const fetchUserByPhone = async (phoneNumber: string) => {
+    const response = await fetch(`/api/invite/by-phone?phone=${encodeURIComponent(phoneNumber)}`);
+    const data = await response.json().catch(() => null);
+
+    return { response, data };
+  };
+
   // Reset Go music notes effect after animation completes
   useEffect(() => {
     if (showGoMusicNotes) {
@@ -76,17 +84,17 @@ export default function Home() {
     setError("");
 
     try {
-      const response = await fetch(`/api/invite/by-phone?phone=${encodeURIComponent(phone)}`);
-      
-      if (!response.ok) {
-        setError("Invitation not found. Please verify your phone number.");
+      const { response, data } = await fetchUserByPhone(phone);
+
+      if (!response.ok || !data?.user) {
+        setError(data?.error || "User not found. Please verify your phone number.");
         setLoading(false);
         return;
       }
 
-      const data = await response.json();
-      sessionStorage.setItem(INVITE_ACCESS_KEY, data.invitation.slug);
-      router.push(`/invite/${data.invitation.slug}`);
+      const slug = data.user.slug ?? createSlug(data.user.name);
+      sessionStorage.setItem(INVITE_ACCESS_KEY, slug);
+      router.push(`/invite/${encodeURIComponent(slug)}`);
     } catch {
       setError("An error occurred. Please try again.");
       setLoading(false);
@@ -293,7 +301,7 @@ export default function Home() {
                   <div style={{ backgroundColor: "#c0c0c0", border: "2px solid", borderColor: "#ffffff #303030 #303030 #ffffff", boxShadow: "inset 1px 1px 0 #ffffff, inset -1px -1px 0 #606060" }}>
                     <div style={{ backgroundColor: "#1e5aa8", border: "2px solid", borderColor: "#4a8ace #0a2a6a #0a2a6a #4a8ace", padding: "10px 10px", textAlign: "center", margin: "3px 3px 0px 3px", boxShadow: "inset 1px 1px 0 #6aadee, inset -1px -1px 0 #000000" }}>
                       <p style={{ fontFamily: "Arial Black, monospace", fontSize: "12px", fontWeight: "900", color: "#ffffff", margin: "0", letterSpacing: "1px", textShadow: "2px 2px 0 #000000, -1px -1px 0 rgba(255,255,255,0.3)", lineHeight: "1.2" }}>
-                        TrunHiu Graduation<br />Invitation
+                        TrunHiu Graduation<br />Login
                       </p>
                     </div>
                     <div style={{ backgroundColor: "#c0d9f0", border: "2px solid", borderColor: "#e8f5ff #4a7ab8 #4a7ab8 #e8f5ff", padding: "14px 12px", margin: "3px 3px 3px 3px", minHeight: "160px", boxShadow: "inset 1px 1px 0 #ffffff, inset -1px -1px 0 #6a8ab8" }}>

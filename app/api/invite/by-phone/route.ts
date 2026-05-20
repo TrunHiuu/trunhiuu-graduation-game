@@ -1,5 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabase } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase";
+
+function normalizePhone(phone: string) {
+  const digitsOnly = phone.replace(/\D/g, "");
+
+  if (digitsOnly.startsWith("84") && digitsOnly.length >= 11) {
+    return `0${digitsOnly.slice(2)}`;
+  }
+
+  return digitsOnly;
+}
 
 export async function GET(request: NextRequest) {
   const phone = request.nextUrl.searchParams.get("phone");
@@ -12,83 +22,52 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Normalize phone: remove spaces, dashes, parentheses, keep only digits and +
-    const normalizedPhone = phone.replace(/[\s\-()]/g, "");
-    
-    if (!/^\+?\d{6,}$/.test(normalizedPhone)) {
+    const normalizedPhone = normalizePhone(phone);
+
+    if (!/^\d{6,}$/.test(normalizedPhone)) {
       return NextResponse.json(
         { error: "Invalid phone number format" },
         { status: 400 }
       );
     }
 
-    const supabase = getSupabase();
+    const supabase = getSupabaseAdmin();
 
     console.log("Searching for phone:", normalizedPhone);
     
-    // Step 1: Fetch user by phone from 'users' table
-    const { data: users, error: userError } = await supabase
+    // Step 1: Fetch all users and compare with normalized phone so stored formatting doesn't matter.
+    const { data: users, error: usersError } = await supabase
       .from("users")
-      .select("*")
-      .eq("phone", normalizedPhone)
-      .limit(1);
+      .select("id, phone, name, nickname, avatar_url, attendance_status_id, created_at, updated_at");
 
-    console.log("User result:", { users, error: userError });
-
-    if (userError) {
-      console.error("Supabase error:", userError);
-      throw userError;
+    if (usersError) {
+      console.error("Supabase error:", usersError);
+      throw usersError;
     }
+
+    const user = (users || []).find((entry) => normalizePhone(entry.phone) === normalizedPhone) ?? null;
+
+    console.log("User result:", { user });
     
-    if (!users || users.length === 0) {
+    if (!user) {
       return NextResponse.json(
         { error: "User not found" },
         { status: 404 }
       );
     }
 
-    const user = users[0];
-
-    // Step 2: Fetch invitation for this user (get latest)
-    const { data: invitations, error: invitationError } = await supabase
-      .from("invitations")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(1);
-
-    console.log("Invitation result:", { invitations, error: invitationError });
-
-    if (invitationError) {
-      console.error("Supabase invitation error:", invitationError);
-      throw invitationError;
-    }
-    
-    if (!invitations || invitations.length === 0) {
-      return NextResponse.json(
-        { error: "Invitation not found" },
-        { status: 404 }
-      );
-    }
-
-    const invitation = invitations[0];
-
-    // Step 3: Fetch memories for this invitation
-    const { data: memories } = await supabase
-      .from("memories")
-      .select("*")
-      .eq("invitation_id", invitation.id);
+    // Step 2: Fetch attendance status separately
+    const { data: attendanceStatus } = await supabase
+      .from("attendance_statuses")
+      .select("id, code, label")
+      .eq("id", user.attendance_status_id)
+      .maybeSingle();
 
     return NextResponse.json({
       user: {
-        id: user.id,
-        phone: user.phone,
-        name: user.name,
-        major: user.major,
-        avatar_url: user.avatar_url,
+        ...user,
+        attendance_status: attendanceStatus ?? null,
       },
-      invitation,
-      memories: memories || [],
     });
   } catch (error) {
     console.error("Error in by-phone route:", error);

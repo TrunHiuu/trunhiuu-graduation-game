@@ -14,24 +14,16 @@ export async function GET() {
       .from("users")
       .select("*", { count: "exact" });
 
-    // Check invites table (cũ)
-    let invitesCount = 0;
-    let invitesErrorMessage: string | undefined;
-    let invitesData = null;
-    try {
-      const result = await supabase
-        .from("invites")
-        .select("*", { count: "exact" });
-      invitesData = result.data;
-      invitesErrorMessage = result.error?.message;
-      invitesCount = result.count || 0;
-    } catch (error: unknown) {
-      invitesErrorMessage = getErrorMessage(error);
-    }
+    const { data: attendanceStatusesData, error: attendanceStatusesError, count: attendanceStatusesCount } = await supabase
+      .from("attendance_statuses")
+      .select("*", { count: "exact" });
 
-    // Check invitations table (mới)
-    const { data: invitationsData, error: invitationsError, count: invitationsCount } = await supabase
-      .from("invitations")
+    const { data: missionsData, error: missionsError, count: missionsCount } = await supabase
+      .from("missions")
+      .select("*", { count: "exact" });
+
+    const { data: quizzesData, error: quizzesError, count: quizzesCount } = await supabase
+      .from("quizzes")
       .select("*", { count: "exact" });
 
     return NextResponse.json({
@@ -40,15 +32,20 @@ export async function GET() {
         error: usersError?.message,
         sample: usersData?.slice(0, 2),
       },
-      invites: {
-        count: invitesCount || 0,
-        error: invitesErrorMessage,
-        sample: invitesData?.slice(0, 2),
+      attendance_statuses: {
+        count: attendanceStatusesCount || 0,
+        error: attendanceStatusesError?.message,
+        sample: attendanceStatusesData?.slice(0, 2),
       },
-      invitations: {
-        count: invitationsCount || 0,
-        error: invitationsError?.message,
-        sample: invitationsData?.slice(0, 2),
+      missions: {
+        count: missionsCount || 0,
+        error: missionsError?.message,
+        sample: missionsData?.slice(0, 2),
+      },
+      quizzes: {
+        count: quizzesCount || 0,
+        error: quizzesError?.message,
+        sample: quizzesData?.slice(0, 2),
       },
     });
   } catch (error: unknown) {

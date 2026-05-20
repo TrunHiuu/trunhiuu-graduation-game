@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSupabase } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase";
 
 function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : "Unknown error";
@@ -7,79 +7,276 @@ function getErrorMessage(error: unknown) {
 
 export async function POST() {
   try {
-    const supabase = getSupabase();
+    const supabase = getSupabaseAdmin();
 
     console.log("Starting setup...");
 
-    // Insert users (không xóa dữ liệu cũ)
-    const { data: users, error: usersError } = await supabase
-      .from("users")
-      .insert([
-        { phone: "0343437536", name: "Đào Trung Hiếu" },
-        { phone: "0984301741", name: "Trần Hữu Phước" },
-        { phone: "0987654321", name: "Dương Bách Đạt" },
-      ])
-      .select();
+    const attendanceStatusesSeed = [
+      { code: "waiting", label: "Waiting" },
+      { code: "confirmed", label: "Confirmed" },
+      { code: "declined", label: "Declined" },
+    ];
 
-    console.log("Users insert result:", { users, error: usersError });
+    const { error: attendanceStatusUpsertError } = await supabase
+      .from("attendance_statuses")
+      .upsert(attendanceStatusesSeed, { onConflict: "code" });
 
-    if (usersError) {
-      console.error("Users error:", usersError);
+    if (attendanceStatusUpsertError) {
       return NextResponse.json(
-        { error: `Failed to insert users: ${usersError.message}` },
+        { error: `Failed to seed attendance statuses: ${attendanceStatusUpsertError.message}` },
         { status: 500 }
       );
     }
 
-    if (!users || users.length === 0) {
+    const { data: attendanceStatuses, error: attendanceStatusError } = await supabase
+      .from("attendance_statuses")
+      .select("id, code, label");
+
+    if (attendanceStatusError) {
       return NextResponse.json(
-        { error: "No users returned from insert" },
+        { error: `Failed to read attendance statuses: ${attendanceStatusError.message}` },
         { status: 500 }
       );
     }
 
-    // Insert invitations
-    const invitationData = [
+    const waitingStatusId = attendanceStatuses?.find((status) => status.code === "waiting")?.id;
+
+    if (!waitingStatusId) {
+      return NextResponse.json(
+        { error: "Waiting attendance status not found" },
+        { status: 500 }
+      );
+    }
+
+    const missionsSeed = [
       {
-        user_id: users[0].id,
-        slug: "dao-trung-hieu",
-        personalized_message:
-          "Chúc mừng bạn hoàn thành khoá học! Hãy cùng chúng tôi ăn mừng ngày tốt nghiệp tại lễ kỷ niệm.",
-        graduation_year: "2026",
+        title: "Quiz Challenge",
+        description: "Answer the first random quiz challenge",
+        mission_order: 1,
+        type: "quiz",
       },
       {
-        user_id: users[1].id,
-        slug: "tran-huu-phuoc",
-        personalized_message:
-          "Bạn thực sự tuyệt vời! Hãy đến dự buổi lễ tốt nghiệp của chúng tôi.",
-        graduation_year: "2026",
+        title: "Quiz Challenge",
+        description: "Answer the second random quiz challenge",
+        mission_order: 2,
+        type: "quiz",
       },
       {
-        user_id: users[2].id,
-        slug: "duong-bach-dat",
-        personalized_message:
-          "Kỷ niệm 4 năm đại học sắp kết thúc. Hãy cùng chúng tôi tạo dấu ấn cuối cùng!",
-        graduation_year: "2026",
+        title: "Wish Crafting Odyssey",
+        description: "Write a wish for me",
+        mission_order: 3,
+        type: "default",
+      },
+      {
+        title: "Photographic Finale",
+        description: "Take a photo with me",
+        mission_order: 4,
+        type: "default",
+      },
+    ] as const;
+
+    const { data: existingMissions, error: existingMissionsError } = await supabase
+      .from("missions")
+      .select("mission_order");
+
+    if (existingMissionsError) {
+      return NextResponse.json(
+        { error: `Failed to read existing missions: ${existingMissionsError.message}` },
+        { status: 500 }
+      );
+    }
+
+    const existingMissionOrders = new Set((existingMissions || []).map((mission) => mission.mission_order));
+    const missionsToInsert = missionsSeed.filter((mission) => !existingMissionOrders.has(mission.mission_order));
+
+    if (missionsToInsert.length > 0) {
+      const { error: missionsError } = await supabase
+        .from("missions")
+        .insert(missionsToInsert);
+
+      if (missionsError) {
+        return NextResponse.json(
+          { error: `Failed to seed missions: ${missionsError.message}` },
+          { status: 500 }
+        );
+      }
+    }
+
+    const quizzesSeed = [
+      {
+        question: "What year did UIT officially become a university member of VNU-HCM?",
+        option_a: "2000",
+        option_b: "2006",
+        option_c: "2010",
+        option_d: "2015",
+        correct_option: "B",
+      },
+      {
+        question: "Which programming language is mainly used for Android native development?",
+        option_a: "Swift",
+        option_b: "Kotlin",
+        option_c: "PHP",
+        option_d: "Ruby",
+        correct_option: "B",
+      },
+      {
+        question: "What does SQL stand for?",
+        option_a: "Structured Query Language",
+        option_b: "Simple Query Language",
+        option_c: "Sequential Query Logic",
+        option_d: "System Query Language",
+        correct_option: "A",
+      },
+      {
+        question: "Which HTML tag is used to display an image?",
+        option_a: "<img>",
+        option_b: "<image>",
+        option_c: "<picture>",
+        option_d: "<src>",
+        correct_option: "A",
+      },
+      {
+        question: "Which company created React?",
+        option_a: "Google",
+        option_b: "Microsoft",
+        option_c: "Meta",
+        option_d: "Apple",
+        correct_option: "C",
+      },
+      {
+        question: "Which database is Supabase built on top of?",
+        option_a: "MySQL",
+        option_b: "MongoDB",
+        option_c: "SQLite",
+        option_d: "PostgreSQL",
+        correct_option: "D",
+      },
+      {
+        question: "What does CSS stand for?",
+        option_a: "Creative Style System",
+        option_b: "Cascading Style Sheets",
+        option_c: "Computer Styled Sections",
+        option_d: "Colorful Style Syntax",
+        correct_option: "B",
+      },
+      {
+        question: "Which Git command uploads local commits to remote repository?",
+        option_a: "git clone",
+        option_b: "git commit",
+        option_c: "git push",
+        option_d: "git init",
+        correct_option: "C",
+      },
+      {
+        question: "Which JavaScript method converts JSON string to object?",
+        option_a: "JSON.parse()",
+        option_b: "JSON.stringify()",
+        option_c: "JSON.object()",
+        option_d: "JSON.convert()",
+        correct_option: "A",
+      },
+      {
+        question: "Which HTTP status code means Not Found?",
+        option_a: "200",
+        option_b: "301",
+        option_c: "404",
+        option_d: "500",
+        correct_option: "C",
+      },
+    ] as const;
+
+    const { data: existingQuizzes, error: existingQuizzesError } = await supabase
+      .from("quizzes")
+      .select("question");
+
+    if (existingQuizzesError) {
+      return NextResponse.json(
+        { error: `Failed to read existing quizzes: ${existingQuizzesError.message}` },
+        { status: 500 }
+      );
+    }
+
+    const existingQuestions = new Set((existingQuizzes || []).map((quiz) => quiz.question));
+    const quizzesToInsert = quizzesSeed.filter((quiz) => !existingQuestions.has(quiz.question));
+
+    if (quizzesToInsert.length > 0) {
+      const { error: quizzesError } = await supabase
+        .from("quizzes")
+        .insert(quizzesToInsert);
+
+      if (quizzesError) {
+        return NextResponse.json(
+          { error: `Failed to seed quizzes: ${quizzesError.message}` },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Seed users idempotently so login works even after rerunning setup
+    const seedUsers = [
+      {
+        phone: "0343437536",
+        name: "Đào Trung Hiếu",
+        nickname: "TrunHiuu",
+        avatar_url:
+          "https://ehfodawhdhqpyrculrli.supabase.co/storage/v1/object/public/Users%20profile%20picture%20for%20TrunHiuu%20graduation%20game/dao-trung-hieu.png",
+        attendance_status_id: waitingStatusId,
+      },
+      {
+        phone: "0984301741",
+        name: "Trần Hữu Phước",
+        nickname: "Phuoc",
+        attendance_status_id: waitingStatusId,
+      },
+      {
+        phone: "0987654321",
+        name: "Dương Bách Đạt",
+        nickname: "Dat",
+        attendance_status_id: waitingStatusId,
       },
     ];
 
-    const { error: invitationsError } = await supabase
-      .from("invitations")
-      .insert(invitationData);
+    const { data: existingUsers, error: existingUsersError } = await supabase
+      .from("users")
+      .select("id, phone, name");
 
-    console.log("Invitations insert result:", { error: invitationsError });
-
-    if (invitationsError) {
-      console.error("Invitations error:", invitationsError);
+    if (existingUsersError) {
       return NextResponse.json(
-        { error: `Failed to insert invitations: ${invitationsError.message}` },
+        { error: `Failed to read existing users: ${existingUsersError.message}` },
         { status: 500 }
       );
+    }
+
+    const existingPhones = new Set((existingUsers || []).map((user) => user.phone));
+    const usersToInsert = seedUsers.filter((user) => !existingPhones.has(user.phone));
+
+    if (usersToInsert.length > 0) {
+      const { data: users, error: usersError } = await supabase
+        .from("users")
+        .insert(usersToInsert)
+        .select();
+
+      console.log("Users insert result:", { users, error: usersError });
+
+      if (usersError) {
+        console.error("Users error:", usersError);
+        return NextResponse.json(
+          { error: `Failed to insert users: ${usersError.message}` },
+          { status: 500 }
+        );
+      }
+
+      if (!users || users.length === 0) {
+        return NextResponse.json(
+          { error: "No users returned from insert" },
+          { status: 500 }
+        );
+      }
     }
 
     return NextResponse.json({
       message: "Database setup completed successfully",
-      users: users.map((u) => ({ id: u.id, phone: u.phone, name: u.name })),
+      users: seedUsers.map((u) => ({ phone: u.phone, name: u.name, nickname: u.nickname })),
     });
   } catch (error: unknown) {
     console.error("Setup error:", error);
