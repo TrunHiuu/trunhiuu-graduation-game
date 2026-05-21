@@ -103,7 +103,7 @@ export async function PATCH(request: NextRequest) {
           .maybeSingle()
       : await supabase
           .from("mission3_answers")
-          .insert(payload)
+          .insert(payload as any)
             .select("id, user_id, answer, submitted_at, created_at, updated_at")
           .maybeSingle();
 
