@@ -21,6 +21,8 @@ type Props = {
   setScores: React.Dispatch<React.SetStateAction<Record<number, { score: number; completed: boolean; completed_at?: string | null }>>>;
 };
 
+const MISSION_4_OPEN_TIME = new Date("2026-06-09T08:00:00+07:00").getTime();
+
 export default function MissionWindow({ user, setUser, scores, setScores }: Props) {
   const router = useRouter();
   const [attendanceStatusCode, setAttendanceStatusCode] = useState<"waiting" | "confirmed" | "declined">(
@@ -458,7 +460,7 @@ export default function MissionWindow({ user, setUser, scores, setScores }: Prop
         isSubmitted={mission4Submitted}
         onReview={() => setReviewOpen(true)}
         onSubmit={() => {
-          if (mission4LockedFinal || !uploadPreviewUrl) {
+          if (mission4LockedFinal || !uploadPreviewUrl || Date.now() < MISSION_4_OPEN_TIME) {
             return;
           }
 

@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+
+const OPEN_TIME = new Date("2026-06-09T08:00:00+07:00").getTime();
 
 type UploadImageTemplateProps = {
   previewUrl?: string | null;
@@ -19,9 +21,35 @@ export default function UploadImageTemplate({
   onReview,
   onSubmit,
 }: UploadImageTemplateProps) {
+  const [now, setNow] = useState<number | null>(null);
+
+  useEffect(() => {
+    setNow(Date.now());
+    const interval = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const isTimeLocked = now !== null && now < OPEN_TIME;
+  const effectiveIsDisabled = isDisabled || isTimeLocked;
+
   // enable Review button when already submitted even if parent `isDisabled`.
   // Disabled when submitting, or when there's no preview and not yet submitted.
-  const submitDisabled = isSubmitting || (!previewUrl && !isSubmitted) || (isDisabled && !isSubmitted);
+  const submitDisabled = isSubmitting || (!previewUrl && !isSubmitted) || (effectiveIsDisabled && !isSubmitted);
+
+  const getRemainingTime = () => {
+    if (now === null) return "00:00:00";
+    const diff = Math.max(0, OPEN_TIME - now);
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    
+    const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    if (days > 0) {
+      return `${days} days ${timeString}`;
+    }
+    return timeString;
+  };
 
   return (
     <div
@@ -36,11 +64,11 @@ export default function UploadImageTemplate({
         {/* header left (title) */}
         <div
           style={{
-            opacity: isDisabled ? 0.35 : 1,
-            filter: isDisabled ? "grayscale(60%) brightness(0.85)" : undefined,
-            pointerEvents: isDisabled ? "none" : "auto",
+            opacity: effectiveIsDisabled ? 0.35 : 1,
+            filter: effectiveIsDisabled ? "grayscale(60%) brightness(0.85)" : undefined,
+            pointerEvents: effectiveIsDisabled ? "none" : "auto",
           }}
-          aria-disabled={isDisabled}
+          aria-disabled={effectiveIsDisabled}
         >
           <p className="text-[13px] font-bold tracking-[1px] text-sky-800 uppercase leading-tight">Mission 4</p>
           <p className="text-[13px] font-extrabold text-slate-900 leading-tight">Photographic Finale</p>
@@ -50,12 +78,12 @@ export default function UploadImageTemplate({
         {isSubmitted ? (
           <div
             style={{
-              opacity: isDisabled ? 0.35 : 1,
-              filter: isDisabled ? "grayscale(60%) brightness(0.85)" : undefined,
+              opacity: effectiveIsDisabled ? 0.35 : 1,
+              filter: effectiveIsDisabled ? "grayscale(60%) brightness(0.85)" : undefined,
             }
             }
             className="text-sm font-bold text-green-700 mr-2"
-            aria-disabled={isDisabled}
+            aria-disabled={effectiveIsDisabled}
           >
             SUBMITTED
           </div>
@@ -82,7 +110,7 @@ export default function UploadImageTemplate({
             boxShadow: "inset 1px 1px 0 #6aadee, inset -1px -1px 0 #000000",
             opacity: submitDisabled ? 0.6 : 1,
             lineHeight: 1,
-            pointerEvents: (isDisabled && !isSubmitted) ? "none" : "auto",
+            pointerEvents: (effectiveIsDisabled && !isSubmitted) ? "none" : "auto",
           }}
         >
           {isSubmitted ? "REVIEW" : (isSubmitting ? "SAVING" : "SUBMIT")}
@@ -92,41 +120,50 @@ export default function UploadImageTemplate({
       <p
         className="text-[13px] font-bold leading-snug text-slate-800"
         style={{
-          opacity: isDisabled ? 0.35 : 1,
-          filter: isDisabled ? "grayscale(60%) brightness(0.85)" : undefined,
-          pointerEvents: isDisabled ? "none" : "auto",
+          opacity: effectiveIsDisabled ? 0.35 : 1,
+          filter: effectiveIsDisabled ? "grayscale(60%) brightness(0.85)" : undefined,
+          pointerEvents: effectiveIsDisabled ? "none" : "auto",
         }}
       >
         Upload a photo with me to finish the final mission.
       </p>
 
-      <label
-        className="mt-2 block rounded border border-dashed border-slate-300 bg-white p-2 text-center text-[13px] font-semibold"
-        style={{
-          opacity: isDisabled ? 0.35 : 1,
-          filter: isDisabled ? "grayscale(60%) brightness(0.85)" : undefined,
-          pointerEvents: isDisabled ? "none" : "auto",
-          cursor: isDisabled ? 'not-allowed' : 'pointer',
-          color: isDisabled ? '#9ca3af' : undefined
-        }}
-        aria-disabled={isDisabled}
-      >
-        <input
-          type="file"
-          accept="image/*"
-          className="hidden"
-          disabled={isDisabled || isSubmitted}
-          onChange={(event) => onFileSelect?.(event.target.files?.[0] ?? null)}
-        />
-        Choose an image
-      </label>
-
-      {previewUrl ? (
-        <div className="mt-2 overflow-hidden rounded border border-slate-300 bg-white p-1.5">
-          {/* preview stays fully visible even when card is dimmed */}
-          <img src={previewUrl} alt="Upload preview" className="h-24 w-full rounded object-cover" style={{ opacity: 1 }} />
+      {isTimeLocked && !isSubmitted ? (
+        <div className="mt-2 text-center text-[11px] font-bold text-red-600 bg-red-100 border border-red-300 rounded p-1.5 shadow-inner">
+          <p>Coming soon 8:00 AM (9/6/2026)</p>
+          <p>Remaining {getRemainingTime()}</p>
         </div>
-      ) : null}
+      ) : (
+        <>
+          <label
+            className="mt-2 block rounded border border-dashed border-slate-300 bg-white p-2 text-center text-[13px] font-semibold"
+            style={{
+              opacity: effectiveIsDisabled ? 0.35 : 1,
+              filter: effectiveIsDisabled ? "grayscale(60%) brightness(0.85)" : undefined,
+              pointerEvents: effectiveIsDisabled ? "none" : "auto",
+              cursor: effectiveIsDisabled ? 'not-allowed' : 'pointer',
+              color: effectiveIsDisabled ? '#9ca3af' : undefined
+            }}
+            aria-disabled={effectiveIsDisabled}
+          >
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              disabled={effectiveIsDisabled || isSubmitted}
+              onChange={(event) => onFileSelect?.(event.target.files?.[0] ?? null)}
+            />
+            Choose an image
+          </label>
+
+          {previewUrl ? (
+            <div className="mt-2 overflow-hidden rounded border border-slate-300 bg-white p-1.5">
+              {/* preview stays fully visible even when card is dimmed */}
+              <img src={previewUrl} alt="Upload preview" className="h-24 w-full rounded object-cover" style={{ opacity: 1 }} />
+            </div>
+          ) : null}
+        </>
+      )}
     </div>
   );
 }
