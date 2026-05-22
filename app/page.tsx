@@ -301,7 +301,7 @@ export default function Home() {
                   <div style={{ backgroundColor: "#c0c0c0", border: "2px solid", borderColor: "#ffffff #303030 #303030 #ffffff", boxShadow: "inset 1px 1px 0 #ffffff, inset -1px -1px 0 #606060" }}>
                     <div style={{ backgroundColor: "#1e5aa8", border: "2px solid", borderColor: "#4a8ace #0a2a6a #0a2a6a #4a8ace", padding: "10px 10px", textAlign: "center", margin: "3px 3px 0px 3px", boxShadow: "inset 1px 1px 0 #6aadee, inset -1px -1px 0 #000000" }}>
                       <p style={{ fontFamily: "Arial Black, monospace", fontSize: "12px", fontWeight: "900", color: "#ffffff", margin: "0", letterSpacing: "1px", textShadow: "2px 2px 0 #000000, -1px -1px 0 rgba(255,255,255,0.3)", lineHeight: "1.2" }}>
-                        TrunHiu Graduation<br />Login
+                        TrunHiu Graduation<br />Invitation 
                       </p>
                     </div>
                     <div style={{ backgroundColor: "#c0d9f0", border: "2px solid", borderColor: "#e8f5ff #4a7ab8 #4a7ab8 #e8f5ff", padding: "14px 12px", margin: "3px 3px 3px 3px", minHeight: "160px", boxShadow: "inset 1px 1px 0 #ffffff, inset -1px -1px 0 #6a8ab8" }}>

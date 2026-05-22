@@ -9,6 +9,7 @@ interface PlayerStatsProps {
   outerBg?: string;
   contentBg?: string;
   children?: React.ReactNode;
+  hideScrollbar?: boolean;
 }
 
 export default function PlayerStatsWindow({
@@ -18,6 +19,7 @@ export default function PlayerStatsWindow({
   outerBg = "#D4C5B0",
   contentBg = "#D4C5B0",
   children,
+  hideScrollbar = false,
 }: PlayerStatsProps) {
   return (
     <motion.div
@@ -56,7 +58,10 @@ export default function PlayerStatsWindow({
         </button>
       </div>
 
-      <div className="p-4 flex-1 overflow-auto" style={{ backgroundColor: contentBg }}>
+      <div 
+        className={`p-4 flex-1 overflow-auto ${hideScrollbar ? "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]" : ""}`} 
+        style={{ backgroundColor: contentBg }}
+      >
         {/* Render any provided children (player UI) inside the framed content area. */}
         {children ?? <div style={{ minHeight: 80 }} />}
       </div>

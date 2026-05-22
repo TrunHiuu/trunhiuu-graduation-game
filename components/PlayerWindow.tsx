@@ -20,6 +20,7 @@ export default function PlayerWindow({ stats, user, scores }: Props) {
       titleBarColor="#FF69B4"
       outerBg="#ffffff"
       contentBg="#ffffff"
+      hideScrollbar={true}
     >
       <style>{`
         @keyframes vertical-progress-stripes {
@@ -32,27 +33,27 @@ export default function PlayerWindow({ stats, user, scores }: Props) {
           animation: vertical-progress-stripes 1s linear infinite;
         }
         @keyframes avatar-anim {
-          0%, 20%, 40%, 60%, 80% { transform: translateY(0) rotateY(0deg); }
-          10%, 30%, 50%, 70% { transform: translateY(-8px) rotateY(0deg); }
-          90% { transform: translateY(-8px) rotateY(180deg); }
+          0%, 50% { transform: translateY(0) rotateY(0deg); }
+          25% { transform: translateY(-8px) rotateY(0deg); }
+          75% { transform: translateY(-8px) rotateY(180deg); }
           100% { transform: translateY(0) rotateY(360deg); }
         }
         .avatar-float-spin {
-          animation: avatar-anim 15s ease-in-out infinite;
+          animation: avatar-anim 5s ease-in-out infinite;
         }
       `}</style>
-      <div className="p-3 mt-2" style={{ fontFamily: 'var(--font-roboto)' }}>
+      <div className="p-3 font-mono uppercase text-[10px]">
         <div className="flex flex-col gap-1">
           <div>
-            <div className="text-gray-700" style={{ fontSize: '13px', fontWeight: 800 }}>Player: <span style={{ color: '#d4a017' }}>{user.nickname || user.name}</span></div>
-            <div className="text-gray-700" style={{ fontSize: '13px', fontWeight: 800 }}>Status: <span style={{ color: user.attendance_status?.code === 'confirmed' ? '#16a34a' : user.attendance_status?.code === 'declined' ? '#dc2626' : '#9ca3af', fontWeight: 700 }}>{user.attendance_status?.label ?? 'waiting'}</span></div>
+            <div className="text-gray-700 font-bold">Player: <span style={{ color: '#ff57c8' }}>{user.nickname || user.name}</span></div>
+            <div className="text-gray-700 font-bold">Status: <span style={{ color: user.attendance_status?.code === 'confirmed' ? '#16a34a' : user.attendance_status?.code === 'declined' ? '#dc2626' : '#9ca3af' }}>{user.attendance_status?.label ?? 'waiting'}</span></div>
           </div>
 
-          <div className="mt-3 flex items-start gap-4">
+          <div className="mt-1 flex items-start gap-4">
             {/* Left: vertical progress + stars (1/3) */}
             <div className="w-1/3 flex justify-center">
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-              <div style={{ position: 'relative', width: 22, height: 220, overflow: 'visible', flexShrink: 0 }}>
+              <div style={{ position: 'relative', width: 22, height: 200, overflow: 'visible', flexShrink: 0 }}>
                 <div className="bg-gray-300 border border-gray-400 shadow-lg" style={{ position: 'absolute', inset: 0, borderRadius: 10, padding: 3, boxSizing: 'border-box' }}>
                   <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                     {/* Phần lõi thanh bar - bị giới hạn bởi overflow: hidden */}

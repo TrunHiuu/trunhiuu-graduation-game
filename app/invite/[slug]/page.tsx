@@ -141,12 +141,12 @@ export default function InvitePage() {
           {/* Column 4: Stack DashBoard and Player - equal height, total height = other columns */}
           <div className="col-span-1 h-full flex flex-col gap-4">
             {/* Top: DashBoard */}
-            <div className="flex-1">
-              <DashboardWindow stats={studentStats} />
+            <div className="h-fit">
+              <DashboardWindow stats={studentStats} user={user} scores={scores} />
             </div>
 
             {/* Bottom: Player */}
-            <div className="flex-1">
+            <div className="h-fit max-h-[346px]">
               <PlayerWindow stats={studentStats} user={user} scores={scores} />
             </div>
           </div>

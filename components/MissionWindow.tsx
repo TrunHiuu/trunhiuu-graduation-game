@@ -498,7 +498,7 @@ export default function MissionWindow({ user, setUser, scores, setScores }: Prop
         {/* Location + Character */}
         <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-0 mt-2">
           <div className="sm:col-span-2">
-            <div className="bg-slate-50 border-2 border-slate-300 p-3 rounded text-slate-700 max-w-full">
+            <div className="bg-slate-50 border-2 p-3 rounded text-slate-700 max-w-full animated-info-box">
               <p style={{ fontSize: '13px' }} className="font-bold flex items-center">
                 <CalendarIcon className="w-4 h-4 mr-2 text-sky-800" />
                 <span className="text-sky-800">Date:</span><span className="ml-2">09/06/2026</span>
@@ -697,6 +697,22 @@ export default function MissionWindow({ user, setUser, scores, setScores }: Prop
           max-width: 100%;
           max-height: 100%;
           display: block;
+        }
+
+        .animated-info-box {
+          border-color: #cbd5e1;
+          animation: infoBoxPulse 2.5s infinite ease-in-out;
+        }
+
+        @keyframes infoBoxPulse {
+          0%, 100% {
+            border-color: #cbd5e1;
+            box-shadow: 0 0 0px transparent, inset 0 0 0px transparent;
+          }
+          50% {
+            border-color: #ec4899;
+            box-shadow: 0 0 10px rgba(236, 72, 153, 0.4), inset 0 0 6px rgba(236, 72, 153, 0.1);
+          }
         }
       `}</style>
     </PixelWindow>
