@@ -57,15 +57,7 @@ Open [http://localhost:3000/invite/test-user](http://localhost:3000/invite/test-
 Insert sample data:
 
 ```sql
-INSERT INTO invites (slug, phone, name, major, personalized_message, graduation_year)
-VALUES (
-  'test-user',
-  '0123456789',
-  'John Doe',
-  'Information Technology',
-  'You are cordially invited to celebrate our graduation!',
-  '2026'
-);
+
 ```
 
 ## Project Structure

@@ -507,7 +507,7 @@ export default function MissionWindow({ user, setUser, scores, setScores }: Prop
               </p>
               <p style={{ fontSize: '13px' }} className="font-bold flex items-center">
                 <ClockIcon className="w-4 h-4 mr-2 text-indigo-700" />
-                <span className="text-indigo-700">Time:</span><span className="ml-2">4:45 - 5:30 PM</span>
+                <span className="text-indigo-700">Time:</span><span className="ml-2">9:30 - 10:00 AM | 4:45 - 5:30 PM</span>
               </p>
               <p style={{ fontSize: '13px' }} className="font-bold flex items-center">
                 <MapPinIcon className="w-4 h-4 mr-2 text-red-700" />
