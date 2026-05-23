@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const OPEN_TIME = new Date("2026-05-23T13:35:00+07:00").getTime();
+const OPEN_TIME = new Date("2026-05-23T13:28:00+07:00").getTime();
 
 type UploadImageTemplateProps = {
   previewUrl?: string | null;
