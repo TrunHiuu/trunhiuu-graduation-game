@@ -21,7 +21,7 @@ type Props = {
   setScores: React.Dispatch<React.SetStateAction<Record<number, { score: number; completed: boolean; completed_at?: string | null }>>>;
 };
 
-const MISSION_4_OPEN_TIME = new Date("2026-05-23T13:16:00+07:00").getTime();
+const MISSION_4_OPEN_TIME = new Date("2026-06-09T08:00:00+07:00").getTime();
 
 export default function MissionWindow({ user, setUser, scores, setScores }: Props) {
   const router = useRouter();
