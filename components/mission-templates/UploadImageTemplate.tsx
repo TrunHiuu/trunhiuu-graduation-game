@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const OPEN_TIME = new Date("2026-06-09T08:00:00+07:00").getTime();
+const OPEN_TIME = new Date("2026-05-23T13:28:00+07:00").getTime();
 
 type UploadImageTemplateProps = {
   previewUrl?: string | null;
@@ -130,7 +130,7 @@ export default function UploadImageTemplate({
 
       {isTimeLocked && !isSubmitted ? (
         <div className="mt-2 text-center text-[11px] font-bold text-red-600 bg-red-100 border border-red-300 rounded p-1.5 shadow-inner">
-          <p>Coming soon 8:00 AM (9/6/2026)</p>
+          <p>Coming soon 1:16 PM (23/5/2026)</p>
           <p>Remaining {getRemainingTime()}</p>
         </div>
       ) : (
